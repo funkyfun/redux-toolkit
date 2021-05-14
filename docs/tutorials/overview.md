@@ -6,33 +6,31 @@ sidebar_label: Tutorials Overview
 hide_title: true
 ---
 
-# Tutorials Overview
+# 指引概览
 
-**The Redux core docs site at https://redux.js.org contains the primary tutorials for learning Redux**, including how to use Redux Toolkit and React-Redux together.
+**Redux 官网：https://redux.js.org 包含了基本的 Redux 教程**, 包含怎么同时使用 Redux Toolkit 和 React-Redux。
 
 :::tip
-
-To avoid duplicating explanations between the Redux core and Redux Toolkit documentation, we've focused on making the Redux core docs tutorials comprehensive, and point to them instead of having extended tutorials here in the Redux Toolkit docs.
-
+为了避免和 Redux 文档介绍重复的内容，我们专注完善 Redux 文档，而不是在 Redux Toolkit 中再去扩展它。
 :::
 
-See these linked tutorials to learn how to use Redux Toolkit effectively.
+参考这些链接来学习高效地使用 Redux Toolkit。
 
-## Redux Toolkit Quick Starts
+## Redux Toolkit 快速上手
 
-The [**Redux Toolkit Quick Start tutorial**](./quick-start.md) briefly shows how to add and use Redux Toolkit in a React application.
+[**Redux Toolkit 快速上手**](./quick-start.md) 简要的说明了怎么在 React 应用中使用 Redux Toolkit。
 
-**If you just want the fastest way to get a basic example running, read the Quick Start tutorial.**
+**如果你只是想快速跑起一个基本的例子，请阅读 Redux Toolkit 快速上手。**
 
-We also have a [**TypeScript Quick Start tutorial**](./typescript.md) that briefly shows how to set up and use TypeScript with Redux Toolkit and React-Redux.
+同时 [**TypeScript 快速上手**](./typescript.md) 简要的说明了怎么使用 TypeScript + Redux Toolkit + React-Redux。
 
-## Redux Essentials: A Real-World Example
+## Redux 概要: 一个真实项目的例子
 
-The [**Redux Essentials tutorial**](https://redux.js.org/tutorials/essentials/part-1-overview-concepts) teaches you "how to use Redux the right way", using Redux Toolkit as the standard approach for writing Redux logic.
+[**Redux 概要**](https://redux.js.org/tutorials/essentials/part-1-overview-concepts) 介绍了怎么正确使用 Redux，同时使用 Redux Toolkit 作为编写 Redux 逻辑的标准方法。
 
-It shows how to build a "real world"-style example application, and teaches Redux concepts along the way.
+它展示了怎么构建一个真实项目的应用，同时介绍了 Redux 的理念。
 
-**If you've never used Redux before, and just want to know "how do I use this to build something useful?", start with the Redux Essentials tutorial.**
+**如果你之前没有使用过 Redux，并且想知道怎么有效使用它，从这篇 Redux 概要文档开始入手吧。**
 
 ## Redux Fundamentals: Redux from the Ground Up
 

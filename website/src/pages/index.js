@@ -10,9 +10,9 @@ const features = [
   {
     content: (
       <p>
-        Includes utilities to simplify common use cases like{' '}
-        <strong>store setup, creating reducers, immutable update logic</strong>,
-        and more.
+        包含简化一些场景配置的工具集，例如{' '}
+        <strong>store 初始化, reducers 创建, 不可变数据更新的逻辑</strong>,
+        等等.
       </p>
     ),
     image: (
@@ -24,14 +24,13 @@ const features = [
       </svg>
     ),
     imageAlign: 'top',
-    title: 'Simple',
+    title: '简单',
   },
   {
     content: (
       <p>
-        Provides <strong>good defaults for store setup out of the box</strong>,
-        and includes{' '}
-        <strong>the most commonly used Redux addons built-in</strong>.
+        提供 <strong>开箱即用的 store 初始化默认配置</strong>, 并且{' '}
+        <strong>内置一些常用的 Redux 插件</strong>.
       </p>
     ),
     image: (
@@ -41,14 +40,14 @@ const features = [
       </svg>
     ),
     imageAlign: 'top',
-    title: 'Opinionated',
+    title: '开箱即用',
   },
   {
     content: (
       <p>
-        Takes inspiration from libraries like Immer and Autodux to let you{' '}
-        <strong>write "mutative" immutable update logic</strong>, and even{' '}
-        <strong>create entire "slices" of state automatically</strong>.
+        受 Immer 和 Autodux 等库的启发{' '}
+        <strong>能够用 "mutative" 的方式做不可变数据更新逻辑</strong>, 并且{' '}
+        <strong>自动创建全部状态的 "slices" </strong>.
       </p>
     ),
     image: (
@@ -67,13 +66,12 @@ const features = [
       </svg>
     ),
     imageAlign: 'top',
-    title: 'Powerful',
+    title: '强大',
   },
   {
     content: (
       <p>
-        Lets you focus on the core logic your app needs, so you can{' '}
-        <strong>do more work with less code</strong>.
+        让开发者专注于应用本身的业务逻辑，<strong>写更少的代码</strong>.
       </p>
     ),
     image: (
@@ -82,13 +80,13 @@ const features = [
       </svg>
     ),
     imageAlign: 'top',
-    title: 'Effective',
+    title: '高效',
   },
 ]
 
 const otherLibraries = [
   {
-    content: 'A predictable state container for JavaScript applications',
+    content: '一个可预测的JavaScript 应用状态管理库',
     title: 'Redux',
     link: 'https://redux.js.org',
     image: (
@@ -104,7 +102,7 @@ const otherLibraries = [
     ),
   },
   {
-    content: 'Official React bindings for Redux',
+    content: 'Redux 官方 React 绑定库',
     title: 'React-Redux',
     link: 'https://react-redux.js.org',
     image: (
@@ -126,7 +124,10 @@ function Home() {
   const { siteConfig = {} } = context
 
   return (
-    <Layout title={siteConfig.title} description={siteConfig.tagline}>
+    <Layout
+      title={`${siteConfig.title} 中文文档`}
+      description={siteConfig.tagline}
+    >
       <header className={classnames('hero hero--primary', styles.heroBanner)}>
         <div className="container">
           <div className={styles.title}>
@@ -145,11 +146,11 @@ function Home() {
             <Link
               className={classnames(
                 'button button--secondary button--lg',
-                styles.getStarted,
+                styles.getStarted
               )}
               to={useBaseUrl('introduction/getting-started')}
             >
-              Get Started
+              立即使用
             </Link>
           </div>
         </div>

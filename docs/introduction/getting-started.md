@@ -1,45 +1,43 @@
 ---
 id: getting-started
-title: Getting Started
-sidebar_label: Getting Started
+title: 新手入门
+sidebar_label: 新手入门
 hide_title: true
 ---
 
-# Getting Started with Redux Toolkit
+# Redux Toolkit 新手入门
 
-## Purpose
+## 目的
 
-The **Redux Toolkit** package is intended to be the standard way to write [Redux](https://redux.js.org) logic. It was originally created to help address three common concerns about Redux:
+**Redux Toolkit** 致力于成为编写 [Redux](https://redux.js.org) 逻辑的标准方式。它最初是为了帮助解决有关 Redux 的三个常见问题而创建的：
 
-- "Configuring a Redux store is too complicated"
-- "I have to add a lot of packages to get Redux to do anything useful"
-- "Redux requires too much boilerplate code"
+- "React 配置真是太复杂啦！"
+- "为了在一些场景让 Redux 好用，我需要引入大量的依赖包"
+- "Redux 太多样板代码啦！"
 
-We can't solve every use case, but in the spirit of [`create-react-app`](https://github.com/facebook/create-react-app) and [`apollo-boost`](https://dev-blog.apollodata.com/zero-config-graphql-state-management-27b1f1b3c2c3), we can try to provide some tools that abstract over the setup process and handle the most common use cases, as well as include some useful utilities that will let the user simplify their application code.
+我们不能解决所有应用场景，但是受到 [`create-react-app`](https://github.com/facebook/create-react-app) 和 [`apollo-boost`](https://dev-blog.apollodata.com/zero-config-graphql-state-management-27b1f1b3c2c3) 的启发，我们可以尝试提供一些工具来抽象初始化过程和兜住大部分常见的应用场景，同时帮助用户简化他们的应用代码。
 
-**These tools should be beneficial to all Redux users**. Whether you're a brand new Redux user setting up your
-first project, or an experienced user who wants to simplify an existing application, **Redux Toolkit** can help
-you make your Redux code better.
+**这些工具应该能让所有 Redux 用户受益**. 不管你是刚引入 Redux 来构建你的应用的新手用户，还是想要精简你原来 Redux 应用代码的老手。**Redux Toolkit** 可以帮助你写出更好的 Redux 代码。
 
-## Installation
+## 安装
 
-### Using Create React App
+### 使用 Create React App
 
-The recommended way to start new apps with React and Redux Toolkit is by using the [official Redux+JS template](https://github.com/reduxjs/cra-template-redux) for [Create React App](https://github.com/facebook/create-react-app), which takes advantage of React Redux's integration with React components.
+创建新的 React + Redux-Toolkit 应用，推荐的方式是使用[Create React App](https://github.com/facebook/create-react-app) 的官方模板 [official Redux+JS template](https://github.com/reduxjs/cra-template-redux), 可以将 React components 和 React Redux 充分整合。
 
 ```sh
 npx create-react-app my-app --template redux
 ```
 
-We also have [a Redux+TS template for CRA as well](https://github.com/reduxjs/cra-template-redux-typescript):
+同样，这个模板 [Redux+TS template](https://github.com/reduxjs/cra-template-redux-typescript) 也很不错:
 
 ```sh
 npx create-react-app my-app --template redux-typescript
 ```
 
-### An Existing App
+### 现有应用接入
 
-Redux Toolkit is available as a package on NPM for use with a module bundler or in a Node application:
+Redux Toolkit 已经发布到 npm，可以使用 npm 安装:
 
 ```bash
 # NPM
@@ -53,23 +51,27 @@ or
 yarn add @reduxjs/toolkit
 ```
 
-It is also available as a precompiled UMD package that defines a `window.RTK` global variable.
-The UMD package can be used as a [`<script>` tag](https://unpkg.com/@reduxjs/toolkit/dist/redux-toolkit.umd.js) directly.
+包内包含一个 UMD 模块，模块定义了一个 `window.RTK` 的全局变量.
+UMD 模块可以直接使用浏览器的 [`<script>` 标签](https://unpkg.com/@reduxjs/toolkit/dist/redux-toolkit.umd.js)引入.
+
+```html
+<script src="https://unpkg.com/@reduxjs/toolkit/dist/redux-toolkit.umd.js"></script>
+```
 
 ## What's Included
 
-Redux Toolkit includes these APIs:
+Redux Toolkit 包含如下 APIs:
 
-- [`configureStore()`](../api/configureStore.mdx): wraps `createStore` to provide simplified configuration options and good defaults. It can automatically combine your slice reducers, adds whatever Redux middleware you supply, includes `redux-thunk` by default, and enables use of the Redux DevTools Extension.
-- [`createReducer()`](../api/createReducer.mdx): that lets you supply a lookup table of action types to case reducer functions, rather than writing switch statements. In addition, it automatically uses the [`immer` library](https://github.com/immerjs/immer) to let you write simpler immutable updates with normal mutative code, like `state.todos[3].completed = true`.
-- [`createAction()`](../api/createAction.mdx): generates an action creator function for the given action type string. The function itself has `toString()` defined, so that it can be used in place of the type constant.
-- [`createSlice()`](../api/createSlice.mdx): accepts an object of reducer functions, a slice name, and an initial state value, and automatically generates a slice reducer with corresponding action creators and action types.
-- [`createAsyncThunk`](../api/createAsyncThunk.mdx): accepts an action type string and a function that returns a promise, and generates a thunk that dispatches `pending/fulfilled/rejected` action types based on that promise
-- [`createEntityAdapter`](../api/createEntityAdapter.mdx): generates a set of reusable reducers and selectors to manage normalized data in the store
-- The [`createSelector` utility](../api/createSelector.mdx) from the [Reselect](https://github.com/reduxjs/reselect) library, re-exported for ease of use.
+- [`configureStore()`](../api/configureStore.mdx): `createStore` 的包装，提供简化的配置和默认选项，可以自动组合reducers, 添加你想要额外添加的 Redux 中间件，默认包含  `redux-thunk`, 默认使用 Redux DevTools Extension。
+- [`createReducer()`](../api/createReducer.mdx): 它让你可以使用以不同 action type 命名的函数的方式来组织你的reducer分支逻辑，而不是使用 switch 语句. 另外，会自动使用 [`immer`](https://github.com/immerjs/immer)，所以你可以使用 mutative 方式完成 immutable updates，就像 `state.todos[3].completed = true`.
+- [`createAction()`](../api/createAction.mdx): 为给定的 action type 字符串生成一个 action creator 函数。函数本身定义了 `toString()`，因此它可以用来代替 type 常量。
+- [`createSlice()`](../api/createSlice.mdx): 给它一个 reducer 函数集合对象, 一个切片 (slice) 的名称, 和一个初始化 state 对象, 它会自动生成一个包含对应的 action creators 和 action types 的 reducer 切片。
+- [`createAsyncThunk`](../api/createAsyncThunk.mdx): 接收一个 action type 字符串和一个返回 promise 的函数，生成一个可以根据之前 promise 的 `pending/fulfilled/rejected` 状态对应的 action types 的 thunk 函数。
+- [`createEntityAdapter`](../api/createEntityAdapter.mdx): 生成一个可重用的 reducers 和 selectors 的集合，来规范化管理 store 中的数据。
+- [`createSelector`](../api/createSelector.mdx) 来自 [Reselect](https://github.com/reduxjs/reselect) , 为了方便使用，在这里重新导出。
 
-## Help and Discussion
+## 求助和讨论
 
-The **[#redux channel](https://discord.gg/0ZcbPKXt5bZ6au5t)** of the **[Reactiflux Discord community](http://www.reactiflux.com)** is our official resource for all questions related to learning and using Redux. Reactiflux is a great place to hang out, ask questions, and learn - come join us!
+**[Reactiflux Discord community](http://www.reactiflux.com)** 的 **[#redux channel](https://discord.gg/0ZcbPKXt5bZ6au5t)** 是官方渠道来解答任何关于学习和使用 Redux 的问题。Reactiflux 是一个适合提问和学习的好地方，快来加入我们吧!
 
-You can also ask questions on [Stack Overflow](https://stackoverflow.com) using the **[#redux tag](https://stackoverflow.com/questions/tagged/redux)**.
+你也可以在 [Stack Overflow](https://stackoverflow.com) 上提问，使用 **[#redux tag](https://stackoverflow.com/questions/tagged/redux)**.

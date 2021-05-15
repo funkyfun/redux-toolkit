@@ -87,7 +87,7 @@ module.exports = {
       items: [
         {
           to: 'introduction/getting-started',
-          label: '快速上手',
+          label: '新手入门',
           position: 'right',
         },
         { to: 'tutorials/overview', label: '教程', position: 'right' },
@@ -111,7 +111,7 @@ module.exports = {
           title: 'Docs',
           items: [
             {
-              label: '快速上手',
+              label: '新手入门',
               to: 'introduction/getting-started',
             },
             {

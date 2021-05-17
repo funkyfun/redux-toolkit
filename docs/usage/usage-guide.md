@@ -11,24 +11,24 @@ Redux 核心库是高度可定制的，这能让开发者自己来决定怎么�
 
 在某些场景，这很棒，它给你更多的灵活性。但是，灵活性并不是所有场景都需要。有时，我们只是想以最简单的方式上手，有一些开箱即用的默认选项。再者，或许你正在写一个大型应用，发现你正在编写一些类似的代码，而你想减少必须手工编写的代码量。
 
-As described in the [Quick Start](../introduction/getting-started.md) page, the goal of Redux Toolkit is to help simplify common Redux use cases. It is not intended to be a complete solution for everything you might want to do with Redux, but it should make a lot of the Redux-related code you need to write a lot simpler (or in some cases, eliminate some of the hand-written code entirely).
+就像[快速上手](../introduction/getting-started.md)页面里说的那样，React Toolkit 的目的是简化一些常用的 Redux 使用场景。它并不打算成为一个解决所有使用 Redux 场景的完整的解决方案，但是它应该能让 Redux 相关代码变得更简单，或者在一些场景避免手写代码。
 
-Redux Toolkit exports several individual functions that you can use in your application, and adds dependencies on some other packages that are commonly used with Redux. This lets you decide how to use these in your own application, whether it be a brand new project or updating a large existing app.
+Redux Toolkit 暴露少量的好用的函数，添加了一些常用的 Redux 相关依赖库。这使得你可以决定在现有应用或者全新项目中如何使用它。
 
 让我们来看看 Redux Toolkit 帮助你优化你的 Redux 相关代码的一些方式。
 
-## Store Setup
+## 配置 Store
 
-Every Redux app needs to configure and create a Redux store. This usually involves several steps:
+所有 Redux 应用都需要先配置和创建一个 Redux store。这通常包含以下步骤：
 
-- Importing or creating the root reducer function
-- Setting up middleware, likely including at least one middleware to handle asynchronous logic
-- Configuring the [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)
-- Possibly altering some of the logic based on whether the application is being built for development or production
+- 导入或者创建一个根级 reducer 函数
+- 设置中间件，比如至少包含一个处理异步逻辑的中间件
+- 设置 [Redux DevTools Extension](https://github.com/zalmoxisus/redux-devtools-extension)
+- 可能需要根据生产环境还是开发环境处理一些不同的逻辑
 
-### Manual Store Setup
+### 通常的 Store Setup
 
-The following example from the [Configuring Your Store](https://redux.js.org/recipes/configuring-your-store) page in the Redux docs shows a typical store setup process:
+下面例子来自于 Redux 文档 [Configuring Your Store](https://redux.js.org/recipes/configuring-your-store) ，展示了典型的 store 设置创建流程:
 
 ```js
 import { applyMiddleware, createStore } from 'redux'
@@ -55,29 +55,28 @@ export default function configureStore(preloadedState) {
   return store
 }
 ```
+这个例子可读性还不错，但是流程通常并不是很直接了当。
 
-This example is readable, but the process isn't always straightforward:
+- Redux 的 `createStore` 函数的参数按顺序是：`(rootReducer, preloadedState, enhancer)`。有些时候并不是那么容易记住它们的顺序。
+- 设置中间件和 enhancers 的过程可能让人感到困惑，尤其加上一堆配置参数时。
+- Redux DevTools Extension 的文档原本建议使用 [一些硬编码来检查全局命名空间从而确定扩展是不是已经安装]。很多人直接拷贝这段代码片段，让初始化的代码可读性更差了。
 
-- The basic Redux `createStore` function takes positional arguments: `(rootReducer, preloadedState, enhancer)`. Sometimes it's easy to forget which parameter is which.
-- The process of setting up middleware and enhancers can be confusing, especially if you're trying to add several pieces of configuration.
-- The Redux DevTools Extension docs initially suggest using [some hand-written code that checks the global namespace to see if the extension is available](https://github.com/zalmoxisus/redux-devtools-extension#11-basic-store). Many users copy and paste those snippets, which make the setup code harder to read.
+### 使用 `configureStore` 简化 Store Setup
 
-### Simplifying Store Setup with `configureStore`
+`configureStore` 通过以下手段来解决之前那些问题:
 
-`configureStore` helps with those issues by:
+- 接收一个带有“具名”参数的选项对象，以便增强可读性
+- 允许你提供一个包含你想添加的 middleware 和 enhancers 的数组，内部会自动调用 `applyMiddleware` 和 `compose`
+- 默认自动开启 Redux DevTools Extension
 
-- Having an options object with "named" parameters, which can be easier to read
-- Letting you provide arrays of middleware and enhancers you want to add to the store, and calling `applyMiddleware` and `compose` for you automatically
-- Enabling the Redux DevTools Extension automatically
+另外，`configureStore` 默认包含一些有各自作用的中间件：
 
-In addition, `configureStore` adds some middleware by default, each with a specific goal:
+- [`redux-thunk`](https://github.com/reduxjs/redux-thunk) 是最常用的中间件之一，它一般用作处理组件外的异步或同步逻辑。
+- 在开发阶段，会帮忙检查一些常见的状态错误的中间件。比如，直接突变状态值或者使用不可序列化的状态值。
 
-- [`redux-thunk`](https://github.com/reduxjs/redux-thunk) is the most commonly used middleware for working with both synchronous and async logic outside of components
-- In development, middleware that check for common mistakes like mutating the state or using non-serializable values.
+这意味着设置 store 的代码变得更简短并且更容易阅读，而且可以获得一些开箱即用的良好的默认行为。
 
-This means the store setup code itself is a bit shorter and easier to read, and also that you get good default behavior out of the box.
-
-The simplest way to use it is to just pass the root reducer function as a parameter named `reducer`:
+使用它的最简单的方法是将root reducer 函数做为 reducer 的选项参数传递：
 
 ```js
 import { configureStore } from '@reduxjs/toolkit'
@@ -90,7 +89,7 @@ const store = configureStore({
 export default store
 ```
 
-You can also pass an object full of ["slice reducers"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic), and `configureStore` will call [`combineReducers`](https://redux.js.org/api/combinereducers) for you:
+同样，你可以传递一个包含多个 ["slice reducers"](https://redux.js.org/recipes/structuring-reducers/splitting-reducer-logic) 对象，`configureStore` 会帮你调用 [`combineReducers`](https://redux.js.org/api/combinereducers) ：
 
 ```js
 import { configureStore } from '@reduxjs/toolkit'
@@ -109,9 +108,8 @@ const store = configureStore({
 export default store
 ```
 
-Note that this only works for one level of reducers. If you want to nest reducers, you'll need to call `combineReducers` yourself to handle the nesting.
-
-If you need to customize the store setup, you can pass additional options. Here's what the hot reloading example might look like using Redux Toolkit:
+注意，这里只对一个层级的 reducers 有效。如果你有嵌套的 reducers，你需要自己调用 `combineReducers` 来合并子项。
+如果需要自定义 store 设置，你可以传递额外的选项参数。这大致是使用 Redux Toolkit 的热重载的例子：
 
 ```js
 import { configureStore } from '@reduxjs/toolkit'
@@ -137,11 +135,11 @@ export default function configureAppStore(preloadedState) {
 }
 ```
 
-If you provide the `middleware` argument, `configureStore` will only use whatever middleware you've listed. If you want to have some custom middleware _and_ the defaults all together, you can call [`getDefaultMiddleware`](../api/getDefaultMiddleware.mdx) and include the results in the `middleware` array you provide.
+如果你提供了 `middleware` 参数，`configureStore` 将只使用你列出的中间件。如果你需要使用一些自定中间件同时使用默认的中间件，你可以调用 [`getDefaultMiddleware`](../api/getDefaultMiddleware.mdx) 合并你的中间件列表。
 
-## Writing Reducers
+## 编写 Reducers
 
-[Reducers](https://redux.js.org/basics/reducers) are the most important Redux concept. A typical reducer function needs to:
+[Reducers](https://redux.js.org/basics/reducers) 是 Redux 的重要概念. 一个典型的 Reducer 函数需要：
 
 - Look at the `type` field of the action object to see how it should respond
 - Update its state immutably, by making copies of the parts of the state that need to change and only modifying those copies

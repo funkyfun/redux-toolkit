@@ -141,20 +141,20 @@ export default function configureAppStore(preloadedState) {
 
 [Reducers](https://redux.js.org/basics/reducers) 是 Redux 的重要概念. 一个典型的 Reducer 函数需要：
 
-- Look at the `type` field of the action object to see how it should respond
-- Update its state immutably, by making copies of the parts of the state that need to change and only modifying those copies
+- 根据不同的 action `type` 做出不同的处理逻辑
+- 通过 immutable 的方式更新 state，先复制一份需要更新的状态的拷贝，然后只修改拷贝而不是直接修改原状态对象。
 
-While you can [use any conditional logic you want](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-2/#switch-statements) in a reducer, the most common approach is a `switch` statement, because it's a straightforward way to handle multiple possible values for a single field. However, many people don't like switch statements. The Redux docs show an example of [writing a function that acts as a lookup table based on action types](https://redux.js.org/recipes/reducing-boilerplate#generating-reducers), but leave it up to users to customize that function themselves.
+你可以在 reducer 中[使用任何你想使用的条件语句](https://blog.isquaredsoftware.com/2017/05/idiomatic-redux-tao-of-redux-part-2/#switch-statements)，最常用的是 `switch` 语句，因为这是处理单个字段的多种可能值的最直接的办式。不过，很多人不喜欢 switch 语句，Redux 文档已经展示了[一种基于不同函数来映射不同 action type 的处理逻辑](https://redux.js.org/recipes/reducing-boilerplate#generating-reducers)的例子，但是，用户需要自行去封装这个逻辑。
 
-The other common pain points around writing reducers have to do with updating state immutably. JavaScript is a mutable language, [updating nested immutable data by hand is hard](https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns), and it's easy to make mistakes.
+另外一个普遍的编写 reducers 的痛点是 state 的更新需要通过 immutable 的方式。JavaScript 是一个 mutable 类型的语言，[想要手动通过 immutable 的方式去更新子级数据是困难的](https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns)，并且容易出错。
 
-### Simplifying Reducers with `createReducer`
+### 使用 `createReducer` 简化 Reducers
 
-Since the "lookup table" approach is popular, Redux Toolkit includes a `createReducer` function similar to the one shown in the Redux docs. However, our `createReducer` utility has some special "magic" that makes it even better. It uses the [Immer](https://github.com/mweststrate/immer) library internally, which lets you write code that "mutates" some data, but actually applies the updates immutably. This makes it effectively impossible to accidentally mutate state in a reducer.
+自从将 Reducer 分成不同 action type 映射处理函数的方式开始流行，Redux Toolkit 内置了一个 `createReducer` 函数，功能类似上面 Redux 文档中[例子](https://redux.js.org/recipes/reducing-boilerplate#generating-reducers)展示的功能。但是，我们的 `createReducer` 使用了一些“魔法”让它更好用。它内部使用了 [Immer](https://github.com/mweststrate/immer)，能让你使用 mutable 的代码来更新数据，但实际上内部数据是以 immutable 的方式更新。这使得直接在 reducer 中直接使用 mutable 的代码来更新数据。
 
-In general, any Redux reducer that uses a `switch` statement can be converted to use `createReducer` directly. Each `case` in the switch becomes a key in the object passed to `createReducer`. Immutable update logic, like spreading objects or copying arrays, can probably be converted to direct "mutation". It's also fine to keep the immutable updates as-is and return the updated copies, too.
+通常，每个使用 `switch` 语句的 Redux reducer 都能迁移到直接使用 `createReducer`。每个 `case` 分支对应传入 `createReducer` 参数对象中的一个 key。Immutable 更新的逻辑，例如，对象展开、数组拷贝，可以直接操作数据对象更新。它可以保持数据的 immutable 更新并返回更新后的克隆对象。
 
-Here's some examples of how you can use `createReducer`. We'll start with a typical "todo list" reducer that uses switch statements and immutable updates:
+这里有一些如何使用 `createReducer` 的例子。我们先按之前的方式来写一个典型的 "todo list" 的 reducer，使用 switch 语句和 immutable 的更新方式:
 
 ```js
 function todosReducer(state = [], action) {
@@ -182,9 +182,9 @@ function todosReducer(state = [], action) {
 }
 ```
 
-Notice that we specifically call `state.concat()` to return a copied array with the new todo entry, `state.map()` to return a copied array for the toggle case, and use the object spread operator to make a copy of the todo that needs to be updated.
+注意，我们特意调用了 `state.concat()` 来克隆一个 todo 数组新增新的 todo 实例，在 toggle 的分支，我们同样使用了 `state.map()` 来返回一个新的数组拷贝，同时，使用了对象展开符来更新需要更新的 todo 实例。
 
-With `createReducer`, we can shorten that example considerably:
+使用 `createReducer`, 我们可以大大简化上面的例子:
 
 ```js
 const todosReducer = createReducer([], (builder) => {
@@ -205,7 +205,7 @@ const todosReducer = createReducer([], (builder) => {
 })
 ```
 
-The ability to "mutate" the state is especially helpful when trying to update deeply nested state. This complex and painful code:
+在我们试图更新一个深层次嵌套的数据的时候，"mutate" 更新的方式就显得格外有用了。下面是一段复杂又让人痛苦的代码:
 
 ```js
 case "UPDATE_VALUE":
@@ -224,7 +224,7 @@ case "UPDATE_VALUE":
   }
 ```
 
-Can be simplified down to just:
+能被简化成这样:
 
 ```js
 updateValue(state, action) {
@@ -235,14 +235,14 @@ updateValue(state, action) {
 
 Much better!
 
-### Considerations for Using `createReducer`
+### 使用 `createReducer` 的思考
 
-While the Redux Toolkit `createReducer` function can be really helpful, keep in mind that:
+虽然 Redux Toolkit `createReducer` 很好用, 但请牢记:
 
-- The "mutative" code only works correctly inside of our `createReducer` function
+- "mutative" 代码只在 `createReducer` 内部生效。
 - Immer won't let you mix "mutating" the draft state and also returning a new state value
 
-See the [`createReducer` API reference](../api/createReducer.mdx) for more details.
+详见 [`createReducer` API 文档](../api/createReducer.mdx)。
 
 ## Writing Action Creators
 

@@ -235,7 +235,7 @@ updateValue(state, action) {
 
 Much better!
 
-### 使用 `createReducer` 的思考
+### 使用 `createReducer` 的注意事项
 
 虽然 Redux Toolkit `createReducer` 很好用, 但请牢记:
 
@@ -244,11 +244,11 @@ Much better!
 
 详见 [`createReducer` API 文档](../api/createReducer.mdx)。
 
-## Writing Action Creators
+## 编写 Action Creators
 
-Redux encourages you to [write "action creator" functions](https://blog.isquaredsoftware.com/2016/10/idiomatic-redux-why-use-action-creators/) that encapsulate the process of creating an action object. While this is not strictly required, it's a standard part of Redux usage.
+Redux 鼓励你[编写 "action creator" 函数](https://blog.isquaredsoftware.com/2016/10/idiomatic-redux-why-use-action-creators/) 来封装 action 对象的创建过程. 尽管这没有强制要求，但是 Redux 标准使用方式之一。
 
-Most action creators are very simple. They take some parameters, and return an action object with a specific `type` field and the parameters inside the action. These parameters are typically put in a field called `payload`, which is part of the [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action) convention for organizing the contents of action objects. A typical action creator might look like:
+大部分 action creators 非常简单。他们将传入的参数包装成一个包含 `type` 字段和这个传入的参数的 action 对象。根据 [Flux 标准的 Action](https://github.com/redux-utilities/flux-standard-action)，传入参数参数通常被命名为 `payload` 字段。一个典型的 action creator 大致像这样：
 
 ```js
 function addTodo(text) {
@@ -259,9 +259,9 @@ function addTodo(text) {
 }
 ```
 
-### Defining Action Creators with `createAction`
+### 通过 `createAction` 定义 Action Creators
 
-Writing action creators by hand can get tedious. Redux Toolkit provides a function called `createAction`, which simply generates an action creator that uses the given action type, and turns its argument into the `payload` field:
+手写 action creators 可能会很繁琐. Redux Toolkit 提供了一个 `createAction` 函数, 通过传入的 action type 来简化 action creator 的创建过程，并将参数转换为 `payload` 字段。
 
 ```js
 const addTodo = createAction('ADD_TODO')
@@ -269,15 +269,15 @@ addTodo({ text: 'Buy milk' })
 // {type : "ADD_TODO", payload : {text : "Buy milk"}})
 ```
 
-`createAction` also accepts a "prepare callback" argument, which allows you to customize the resulting `payload` field and optionally add a `meta` field. See the [`createAction` API reference](../api/createAction.mdx#using-prepare-callbacks-to-customize-action-contents) for details on defining action creators with a prepare callback.
+`createAction` 还接收一个 "prepare callback" 参数, 允许你自定义 `payload` 字段并可选地添加一个 `meta` 字段。详见[`createAction` API 文档](../api/createAction.mdx#using-prepare-callbacks-to-customize-action-contents) .
 
-### Using Action Creators as Action Types
+### 使用 Action Creators 充当 Action Types
 
-Redux reducers need to look for specific action types to determine how they should update their state. Normally, this is done by defining action type strings and action creator functions separately. Redux Toolkit `createAction` function uses a couple tricks to make this easier.
+Redux reducers 需要找到对应的 action types 来确定怎么更新状态的逻辑。通常，这是通过分别定义 action type 字符串和 action creator 函数来实现的。Redux Toolkit `createAction` 使用了一些技巧来使这变得更简单。
 
-First, `createAction` overrides the `toString()` method on the action creators it generates. **This means that the action creator itself can be used as the "action type" reference in some places**, such as the keys provided to `builder.addCase` or the `createReducer` object notation.
+首先, `createAction` 重写了生成的 action creators 的 `toString()` 。 **这意味着 action creator 本身可以在一些场景中充当 "action type"**, 比如提供给 `builder.addCase` 或 `createReducer` 的键.
 
-Second, the action type is also defined as a `type` field on the action creator.
+再者, action type 也被定义成 action creator 的 `type` 字段。
 
 ```js
 const actionCreator = createAction('SOME_ACTION_TYPE')
@@ -298,10 +298,9 @@ const reducer = createReducer({}, (builder) => {
   builder.addCase(actionCreator.type, (state, action) => {})
 })
 ```
+这意味着你不需要单独定义一个 action type 变量，或者使用一个变量名和值重复的 action type 定义，例如 `const SOME_ACTION_TYPE = "SOME_ACTION_TYPE"`。
 
-This means you don't have to write or use a separate action type variable, or repeat the name and value of an action type like `const SOME_ACTION_TYPE = "SOME_ACTION_TYPE"`.
-
-Unfortunately, the implicit conversion to a string doesn't happen for switch statements. If you want to use one of these action creators in a switch statement, you need to call `actionCreator.toString()` yourself:
+不幸的是，在 switch 语句中 case 分支的判断不会做隐式 string 类型转换，如果你想在 switch 语句中使用 action creators，你需要调用一下 `actionCreator.toString()`：
 
 ```js
 const actionCreator = createAction('SOME_ACTION_TYPE')
@@ -323,12 +322,11 @@ const reducer = (state = {}, action) => {
   }
 }
 ```
+如果你配合使用 TypeScript，编译器也不会接收隐式的 `toString()` 转换，比如，把action creator 作为 object 的 key 的时候，你需要做一下类型强转 (`actionCreator as string`)，或者直接使用 `.type`。
 
-If you are using Redux Toolkit with TypeScript, note that the TypeScript compiler may not accept the implicit `toString()` conversion when the action creator is used as an object key. In that case, you may need to either manually cast it to a string (`actionCreator as string`), or use the `.type` field as the key.
+## 创建 State 切片
 
-## Creating Slices of State
-
-Redux state is typically organized into "slices", defined by the reducers that are passed to `combineReducers`:
+Redux state 通常被组织成 “切片（slices）”，通过 传递给 `combineReducers` 的 reducers 定义:
 
 ```js
 import { combineReducers } from 'redux'
@@ -341,13 +339,13 @@ const rootReducer = combineReducers({
 })
 ```
 
-In this example, both `users` and `posts` would be considered "slices". Both of the reducers:
+上面例子中，`users` 和 `posts` 都会被视为 “切片”，他们：
 
-- "Own" a piece of state, including what the initial value is
-- Define how that state is updated
-- Define which specific actions result in state updates
+- 包含自己的状态，并有初始值
+- 定义了状态如何变更
+- 定义了 actions 对应的状态变更
 
-The common approach is to define a slice's reducer function in its own file, and the action creators in a second file. Because both functions need to refer to the same action types, those are usually defined in a third file and imported in both places:
+通常的实现是将切片的 reducer 函数定义在一个单独的文件，action creators 定义在另一个文件。由于两个函数都需要引用相同的 action types，所以通常会把 action types 又放到一个文件中去定义然后分别导入。
 
 ```js
 // postsConstants.js
@@ -381,7 +379,7 @@ export default function postsReducer(state = initialState, action) {
 }
 ```
 
-The only truly necessary part here is the reducer itself. Consider the other parts:
+这里唯一真正有必要的部分是 reducer 本身。考虑其他部分：
 
 - We could have written the action types as inline strings in both places
 - The action creators are good, but they're not _required_ to use Redux - a component could skip supplying a `mapDispatch` argument to `connect`, and just call `this.props.dispatch({type : "CREATE_POST", payload : {id : 123, title : "Hello World"}})` itself
